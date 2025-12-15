@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: order_engine_user
+      POSTGRES_PASSWORD: order_engine_pass
+      POSTGRES_DB: order_engine
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U order_engine_user -d order_engine"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+    command: ["redis-server","--appendonly","yes"]

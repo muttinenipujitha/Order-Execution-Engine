@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  pending
+  routing
+  building
+  submitted
+  confirmed
+  failed
+}
+
+enum OrderType {
+  market
+}
+
+enum DexVenue {
+  raydium
+  meteora
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  clientOrderId String?     @unique
+  status        OrderStatus @default(pending)
+  orderType     OrderType
+  tokenIn       String
+  tokenOut      String
+  amountIn      Decimal
+  slippageBps   Int         @default(50)
+  chosenDex     DexVenue?
+  quoteJson     Json?
+  executedPrice Decimal?
+  txHash        String?
+  failureReason String?
+  attempts      Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  events        OrderEvent[]
+}
+
+model OrderEvent {
+  id        BigInt      @id @default(autoincrement())
+  orderId   String
+  status    OrderStatus
+  message   String?
+  data      Json?
+  createdAt DateTime    @default(now())
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  @@index([orderId])
+  @@index([createdAt])
+}
