@@ -3,7 +3,7 @@ import { sleep } from "../../utils/sleep";
 export type Quote = { dex: "raydium" | "meteora"; price: number; feeBps: number; liquidityScore: number };
 
 export class MockDexRouter {
-  constructor(private basePrice = 1.0) {}
+  constructor(private basePrice = 1.0) {}  
 
   async getRaydiumQuote(): Promise<Quote> {
     await sleep(200);
